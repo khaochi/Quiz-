@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f5f6fa">
+<title>SI131 Rehab Exam Drill</title>
+<style>
+:root {
+  --bg:#f5f6fa; --card:#fff; --text:#172033; --muted:#667085; --line:#e5e7ee;
+  --accent:#3157d5; --accent-soft:#eef2ff; --answer:#f6f9ff; --pearl:#fff8e8;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:780px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px calc(32px + env(safe-area-inset-bottom))}
+header{margin:4px 2px 14px}
+h1{font-size:24px;line-height:1.2;margin:0 0 6px}
+header p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+.tab-input{position:absolute;opacity:0;pointer-events:none}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.tabs label{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:14px;border:1px solid var(--line);background:#fff;font-weight:750;font-size:16px;cursor:pointer;user-select:none}
+#tab-mcq:checked ~ .tabs label[for="tab-mcq"],
+#tab-seq:checked ~ .tabs label[for="tab-seq"],
+#tab-high:checked ~ .tabs label[for="tab-high"]{background:var(--accent);color:white;border-color:var(--accent)}
+.panel{display:none}
+#tab-mcq:checked ~ .panel-mcq{display:block}
+#tab-seq:checked ~ .panel-seq{display:block}
+#tab-high:checked ~ .panel-high{display:block}
+.section-note{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px 14px;color:var(--muted);font-size:14px;line-height:1.45;margin-bottom:10px}
+.rotation{background:#fff;border:1px solid var(--line);border-radius:17px;margin:10px 0;overflow:hidden}
+.rotation > summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 16px;font-size:17px;font-weight:800;cursor:pointer}
+.rotation > summary::-webkit-details-marker{display:none}
+.rotation > summary::after{content:"+";color:var(--muted);font-size:20px;margin-left:auto}
+.rotation[open] > summary::after{content:"–"}
+.count{font-size:12px;font-weight:700;color:var(--muted);background:var(--bg);border-radius:999px;padding:5px 8px;margin-left:auto}
+.rotation-body{border-top:1px solid var(--line);padding:10px}
+.qcard{padding:15px 4px 16px;border-bottom:1px solid var(--line)}
+.qcard:last-child{border-bottom:none}
+.qnum{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--accent);margin-bottom:6px}
+.qcard h3{font-size:18px;line-height:1.42;margin:0;font-weight:760}
+.choices{margin:12px 0 0;padding-left:27px}
+.choices li{margin:7px 0;line-height:1.4}
+.answerbox{margin-top:13px}
+.answerbox > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 15px;border-radius:13px;background:var(--accent);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+.answerbox > summary::-webkit-details-marker{display:none}
+.answerbox[open] > summary{background:#e9edfb;color:#2948ae}
+.answerbox[open] > summary::after{content:"  · Hide"}
+.answer-content{margin-top:10px;background:var(--answer);border:1px solid #dbe4ff;border-radius:14px;padding:13px 14px;line-height:1.5}
+.answer-line{font-size:16px}
+.caveat{margin-top:9px;color:var(--muted);font-size:14px;line-height:1.45}
+.seq-answer{margin:0;padding-left:20px}
+.seq-answer li{margin:7px 0}
+.pearl{margin-top:10px;background:var(--pearl);border-radius:11px;padding:10px 11px;color:#614100;font-size:14px;line-height:1.4}
+.high-grid{display:grid;gap:9px}
+.topic{background:#fff;border:1px solid var(--line);border-radius:15px;padding:0 14px}
+.topic > summary{list-style:none;padding:14px 0;font-size:17px;font-weight:800;cursor:pointer}
+.topic > summary::-webkit-details-marker{display:none}
+.topic > summary::after{content:"+";float:right;color:var(--muted)}
+.topic[open] > summary::after{content:"–"}
+.topic ul{margin:0 0 14px;padding-left:20px}
+.topic li{margin:8px 0;line-height:1.45}
+.final-section{margin-top:18px}
+.final-section h2{font-size:19px;margin:0 0 10px}
+.final15{counter-reset:n;list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.final15 li{counter-increment:n;background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 12px 12px 44px;position:relative;line-height:1.4}
+.final15 li::before{content:counter(n);position:absolute;left:12px;top:10px;width:24px;height:24px;border-radius:999px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:12px;font-weight:800}
+.footer{margin-top:18px;color:var(--muted);font-size:12px;line-height:1.4;text-align:center}
+@media(max-width:420px){
+  .wrap{padding-left:10px;padding-right:10px}
+  .qcard h3{font-size:17px}
+  .rotation-body{padding:8px 10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>SI131 Rehab Exam Drill</h1>
+    <p>Offline-friendly iPhone/iPad version. Questions stay collapsed by rotation; answers open only when you tap <b>Reveal answer</b>.</p>
+  </header>
+
+  <input class="tab-input" type="radio" name="tabs" id="tab-mcq" checked>
+  <input class="tab-input" type="radio" name="tabs" id="tab-seq">
+  <input class="tab-input" type="radio" name="tabs" id="tab-high">
+
+  <nav class="tabs" aria-label="Study sections">
+    <label for="tab-mcq">MCQ</label>
+    <label for="tab-seq">SEQ</label>
+    <label for="tab-high">High Yield</label>
+  </nav>
+
+  <main class="panel panel-mcq">
+    <div class="section-note">MCQ answers are intentionally short. Tap a rotation, then reveal only the question you are working on.</div>
+    <details class="rotation" open>
+<summary><span>Rotation 541–542</span><span class="count">4 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>Right ulnar nerve laceration, repaired 7 days ago. Most appropriate rehabilitation management?</h3>
+<ol class="choices" type="A">
+<li>TENS</li>
+<li>ROM exercise</li>
+<li>Shockwave</li>
+<li>One option missing</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Protected ROM only. If forced to choose from the visible options: ROM exercise.</div>
+<div class="caveat">Fresh nerve repair must not be stretched aggressively; protective splinting may be preferable if that was the missing choice.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q2</div>
+<h3>Which finding occurs during the flaccid phase after stroke?</h3>
+<ol class="choices" type="A">
+<li>Claw toe</li>
+<li>Adhesive capsulitis</li>
+<li>Increased space between acromion and humeral head</li>
+<li>Tight calf</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Increased space between the acromion and humeral head → inferior shoulder subluxation.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q3</div>
+<h3>Common pressure-injury site in side-lying?</h3>
+<ol class="choices" type="A">
+<li>Breast</li>
+<li>Heel</li>
+<li>Iliac crest</li>
+<li>One option missing</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Greater trochanter if offered; among the visible choices, iliac crest.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q4</div>
+<h3>Which exercise improves flexibility?</h3>
+<ol class="choices" type="A">
+<li>Marching</li>
+<li>“Indoor way”</li>
+<li>Tandem walking</li>
+<li>Stepping</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Cannot be determined reliably from the recalled choices.</div>
+<div class="caveat">Flexibility is primarily trained by stretching; the stem or one option was likely recalled incorrectly.</div>
+</div></details></article>
+</div></details>
+<details class="rotation" >
+<summary><span>Rotation 539–540</span><span class="count">8 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>What does FABER test assess?</h3>
+<ol class="choices" type="A">
+<li>Hip joint pathology</li>
+<li>Radicular pain</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Hip / sacroiliac region pathology; if choosing between the recalled options: hip joint pathology.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q2</div>
+<h3>How do you calculate %HRmax and %heart-rate reserve?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> HRmax ≈ 220 − age.  %HRmax = exercise HR / HRmax × 100.  HRR = HRmax − resting HR.  %HRR = (exercise HR − resting HR) / HRR × 100.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q3</div>
+<h3>Older patient with foot drop. Appropriate orthosis?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Ankle-foot orthosis (AFO).</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q4</div>
+<h3>Stroke patient circumducts the affected leg and drags the foot. Management?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> AFO, if impaired dorsiflexion / foot drop contributes to toe drag.</div>
+<div class="caveat">Circumduction can have other causes, so AFO is not automatic in every case.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q5</div>
+<h3>Older adult walks with the trunk leaning sideways. What compensatory gait is present?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Likely compensated Trendelenburg gait, if the trunk leans toward the stance limb.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q6</div>
+<h3>Which examination identifies a predisposing factor for plantar fasciitis?</h3>
+<ol class="choices" type="A">
+<li>Walking pattern</li>
+<li>Heel tenderness</li>
+<li>Plantar-fascia tenderness</li>
+<li>Ankle dorsiflexion ROM</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Ankle dorsiflexion ROM.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q7</div>
+<h3>Tennis player, acute shoulder pain for 1 day, limited active ROM but full passive ROM. Best treatment?</h3>
+<ol class="choices" type="A">
+<li>Hot pack</li>
+<li>NSAIDs</li>
+<li>Pulley exercise</li>
+<li>Stretching</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> NSAIDs, if no contraindication.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q8</div>
+<h3>Best breathing exercise for COPD?</h3>
+<ol class="choices" type="A">
+<li>Pursed-lip breathing</li>
+<li>Thoracic expansion</li>
+<li>Abdominal expansion</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Pursed-lip breathing.</div>
+</div></details></article>
+</div></details>
+<details class="rotation" >
+<summary><span>Rotation 537–538</span><span class="count">4 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>Ulnar nerve injury repaired 7 days ago. Appropriate rehabilitation?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Protected ROM.</div>
+<div class="caveat">If protective splinting is an unseen choice, it may be preferable depending on the surgical protocol.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q2</div>
+<h3>Finding during the flaccid stage of stroke?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Inferior shoulder subluxation → increased acromion–humeral-head gap.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q3</div>
+<h3>Side-lying pressure-injury site?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Greater trochanter if offered; among visible recalled choices, iliac crest.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q4</div>
+<h3>Which recalled exercise improves flexibility?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Cannot determine from the recall; no clear stretching option is present.</div>
+</div></details></article>
+</div></details>
+<details class="rotation" >
+<summary><span>Rotation 531–532</span><span class="count">2 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>35-year-old programmer with 2 weeks of intermittent neck/back pain diagnosed as myofascial pain syndrome. Key management?</h3>
+<ol class="choices" type="A">
+<li>Hot pack</li>
+<li>Proper sitting / workstation ergonomics</li>
+<li>Posture brace</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> Proper sitting / workstation ergonomics.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q2</div>
+<h3>30-year-old woman with unilateral femoral fracture must remain non-weight-bearing. Which walking aid?</h3>
+<ol class="choices" type="A">
+<li>Lofstrand / forearm crutches</li>
+<li>Cane</li>
+<li>Walker</li>
+</ol>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<div class="answer-line"><strong>Answer:</strong> A pair of Lofstrand / forearm crutches, assuming good balance and upper-limb strength.</div>
+<div class="caveat">A walker is also suitable in some patients; a single cane is not enough for strict NWB.</div>
+</div></details></article>
+</div></details>
+  </main>
+
+  <main class="panel panel-seq">
+    <div class="section-note">SEQ answers include the core scoring points plus a short exam pearl only when it adds value.</div>
+    <details class="rotation" open>
+<summary><span>Rotation 541–542</span><span class="count">15 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>Give 2 consequences of persistent residual-limb edema after amputation.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Delayed residual-limb shaping → difficult prosthetic fitting.</li>
+<li>Skin / wound problems and discomfort.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q2</div>
+<h3>Exercise during the thawing phase of frozen shoulder.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Progressive active-assisted and active ROM.</li>
+<li>Gentle sustained stretching.</li>
+<li>Progress shoulder / scapular strengthening as ROM improves.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Thawing = ROM improving → restore ROM + gradually strengthen.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q3</div>
+<h3>Timing and goals of acute-phase versus rehabilitation-phase stroke care.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Acute phase: early assessment, positioning, swallowing safety, ROM and complication prevention.</li>
+<li>Mobilize when medically stable; avoid aggressive high-dose mobilization in the first 24 h.</li>
+<li>Rehabilitation phase: active multidisciplinary functional training once stable and able to participate.</li>
+<li>Goal: acute = prevent complications; rehab = restore / maximize function, ADL and participation.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Acute = prevent complication. Rehab = restore function.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q4</div>
+<h3>Criterion for entering an ageing society.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Thai convention: age ≥60 years &gt;10%.</li>
+<li>Alternative convention: age ≥65 years &gt;7%.</li>
+<li>For ≥60 years: 10% ageing → 20% complete-aged → 28% super-aged.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Memorize the Thai ≥60-year thresholds first.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q5</div>
+<h3>Ageing characteristics relevant to rehabilitation.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Reduced physiological reserve and exercise tolerance.</li>
+<li>Sarcopenia / reduced strength, flexibility and bone strength.</li>
+<li>Reduced visual, vestibular and proprioceptive function → impaired balance.</li>
+<li>Multimorbidity, polypharmacy and slower recovery.</li>
+<li>Cognitive, psychological, nutritional and social issues may limit participation.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Backup mnemonic: RAMPS = Reduced reserve, Atypical presentation, Multiple pathology, Polypharmacy, Social adversity.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q6</div>
+<h3>Principle of balance testing in older adults.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Assess control of center of mass relative to base of support.</li>
+<li>Assess both static and dynamic balance.</li>
+<li>Progress easier → harder: feet together → semi-tandem → tandem → single-leg stance.</li>
+<li>Use standardized tests and guard against falls.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Testing ≠ training.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q7</div>
+<h3>Identify axillary crutches and give one indication.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Axillary crutches.</li>
+<li>Example: unilateral lower-limb fracture requiring non-weight-bearing, with adequate upper-limb strength and balance.</li>
+<li>Weight is supported through the hands, not the axillae.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q8</div>
+<h3>Identify a single-point cane and explain measurement.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Handle at wrist crease / greater trochanter level while standing in usual shoes.</li>
+<li>About 20–30° elbow flexion when holding.</li>
+<li>Usually hold it opposite the weak or painful leg.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q9</div>
+<h3>Which muscles should be exercised after lower-limb amputation?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Hip extensors and abductors are especially important.</li>
+<li>If the knee is preserved: quadriceps and hamstrings.</li>
+<li>Also strengthen the intact leg, trunk and upper limbs for transfers / gait aids.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Exact program depends on amputation level.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q10</div>
+<h3>Give 2 therapeutic-exercise components for mild knee OA.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Quadriceps strengthening.</li>
+<li>ROM / flexibility exercise for the knee and tight surrounding muscles.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Low-impact aerobic exercise is also useful.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q11</div>
+<h3>Stroke discharge planning: grade-4 power, tripod cane, poorly controlled HT, smoker, sleeps on floor. Give 4 points.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Secondary prevention: BP control, adherence, smoking cessation and follow-up.</li>
+<li>Home modification: suitable-height bed, safe bathroom, clear walking route.</li>
+<li>Functional safety: safe transfers, ADL and correct cane use.</li>
+<li>Continuity: home exercise, caregiver education and rehab follow-up.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q12</div>
+<h3>Advice for phantom sensation.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Explain that feeling the missing limb is common after amputation.</li>
+<li>If painless, specific analgesic treatment is usually unnecessary.</li>
+<li>Distinguish phantom sensation from phantom limb pain.</li>
+<li>Warn the patient not to try to stand on the perceived missing limb.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q13</div>
+<h3>Back pain worsened by coughing / sneezing / straining. Flexion or extension exercise?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Likely exam answer: extension-biased exercise for disc-related pain / HNP.</li>
+<li>Clinically, continue a direction only if symptoms improve or centralize; stop if symptoms peripheralize.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Exam key often says disc → extension, but real practice uses directional preference.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q14</div>
+<h3>Back / leg symptoms improve by sitting; SLR and Kemp negative. Give 2 differential diagnoses.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Lumbar spinal stenosis with neurogenic claudication.</li>
+<li>Vascular claudication / peripheral arterial disease.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> If the original stem was mainly axial back pain, lumbar spondylosis may have been the intended second answer.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q15</div>
+<h3>How should airway clearance be performed in COPD?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>ACBT: breathing control → thoracic expansion → huffing.</li>
+<li>Effective cough when secretions move proximally.</li>
+<li>Mobilization; add PEP / OPEP or positioning when appropriate.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Dyspnea → pursed-lip breathing. Sputum → ACBT + huff + cough.</div>
+</div></details></article>
+</div></details>
+<details class="rotation" >
+<summary><span>Rotation 539–540</span><span class="count">14 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>Principle of balance training in older adults.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Progressively challenge balance while maintaining safety.</li>
+<li>Reduce base of support and hand support as ability improves.</li>
+<li>Progress static → dynamic tasks.</li>
+<li>Train weight shifting, reaching, stepping, turning and walking.</li>
+<li>Combine with lower-limb strengthening.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Progressive challenge without causing falls.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q2</div>
+<h3>60-year-old man: buttock / back pain during standing or prolonged walking, relieved by sitting; SLR and Kemp negative. Give 2 diagnoses.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Lumbar spinal stenosis → neurogenic claudication.</li>
+<li>Peripheral arterial disease → vascular claudication.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q3</div>
+<h3>Frozen shoulder during thawing phase — exercise.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Progressive active-assisted / active ROM.</li>
+<li>Sustained gentle stretching.</li>
+<li>Progressive rotator-cuff / scapular strengthening.</li>
+<li>Gradual return to functional reaching.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q4</div>
+<h3>Stroke discharge plan — give 4.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Control HT, ensure adherence, stop smoking and follow up.</li>
+<li>Suitable-height bed and home / bathroom modification.</li>
+<li>Ensure safe transfers, ADL and cane use.</li>
+<li>Continue home exercise / rehab and caregiver education.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q5</div>
+<h3>Define an ageing society.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Age ≥60 years &gt;10%, or age ≥65 years &gt;7%.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> For this exam, memorize the Thai ≥60-year convention first.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q6</div>
+<h3>Give 2 complications of residual-limb edema.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Delayed limb shaping and prosthetic fitting.</li>
+<li>Skin / wound problems and discomfort.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q7</div>
+<h3>Give 2 exercises for mild knee OA.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Quadriceps strengthening.</li>
+<li>ROM / flexibility exercise.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q8</div>
+<h3>Timing and goals of acute and rehabilitation phases after stroke.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Acute: early assessment and complication prevention; mobilize when medically stable.</li>
+<li>Rehabilitation: active multidisciplinary functional training.</li>
+<li>Goal: acute = prevent secondary complications; rehab = maximize ADL, mobility and participation.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q9</div>
+<h3>Back pain worse with sitting / coughing / sneezing + positive SLR. Flexion or extension?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Likely exam answer: extension-biased exercise.</li>
+<li>Likely diagnosis: disc-related radiculopathy / HNP.</li>
+<li>Continue only if symptoms centralize / improve; stop if they peripheralize.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q10</div>
+<h3>Marathon runner with heel pain for 6 months. Best among foot insert, stretching and ultrasound?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Stretching.</li>
+<li>Use plantar-fascia-specific and gastrocnemius / soleus stretching.</li>
+<li>Add load / activity modification.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Assumes the intended diagnosis is plantar fasciopathy.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q11</div>
+<h3>Identify axillary crutches and give one indication.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Axillary crutches.</li>
+<li>Example: unilateral lower-limb fracture requiring non-weight-bearing.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q12</div>
+<h3>Identify single-point cane and describe measurement.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Handle at wrist crease / greater trochanter level.</li>
+<li>About 20–30° elbow flexion.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q13</div>
+<h3>COPD after pneumonia: productive cough remains. Describe pulmonary rehabilitation.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>For sputum: ACBT, huffing, effective cough and mobilization.</li>
+<li>Then progressive walking / aerobic exercise and resistance training.</li>
+<li>Review inhaler technique, pacing, smoking cessation and self-management.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Productive cough → prioritize airway clearance, not pursed-lip breathing alone.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q14</div>
+<h3>Ageing characteristics related to rehabilitation.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Reduced physiological reserve.</li>
+<li>Sarcopenia / reduced strength.</li>
+<li>Reduced flexibility and bone strength.</li>
+<li>Balance / sensory impairment.</li>
+<li>Multimorbidity and polypharmacy.</li>
+<li>Cognitive, psychological and social factors.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Mnemonic if requested: RAMPS.</div>
+</div></details></article>
+</div></details>
+<details class="rotation" >
+<summary><span>Rotation 537–538</span><span class="count">17 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>Give 2 consequences of persistent residual-limb edema.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Delayed shaping / prosthetic fitting.</li>
+<li>Skin or wound problems / discomfort.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q2</div>
+<h3>Frozen shoulder thawing-phase exercise.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Progressive ROM.</li>
+<li>Gentle sustained stretching.</li>
+<li>Progressive strengthening.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q3</div>
+<h3>Timing and goals after stroke.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Acute: early complication prevention; mobilize when stable.</li>
+<li>Rehabilitation: task-specific functional training.</li>
+<li>Goal: maximize ADL, mobility and participation.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q4</div>
+<h3>Ageing-society definition.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Age ≥60 years &gt;10%.</li>
+<li>Alternative convention: age ≥65 years &gt;7%.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q5</div>
+<h3>Ageing characteristics affecting rehabilitation.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Reduced reserve, strength and flexibility.</li>
+<li>Sensory / balance deterioration.</li>
+<li>Multimorbidity and polypharmacy.</li>
+<li>Cognitive / social factors.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> RAMPS if a mnemonic is specifically asked.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q6</div>
+<h3>Principle of balance testing.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Assess static and dynamic balance.</li>
+<li>Control of center of mass relative to base of support.</li>
+<li>Progressively narrow base / increase challenge.</li>
+<li>Use standardized tests and guard against falls.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q7</div>
+<h3>Axillary crutches + one indication.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Axillary crutches.</li>
+<li>Example: NWB after unilateral lower-limb fracture.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q8</div>
+<h3>Single cane + measurement.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Single-point cane.</li>
+<li>Wrist-crease height.</li>
+<li>20–30° elbow flexion.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q9</div>
+<h3>Muscles to exercise after lower-limb amputation.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Hip extensors.</li>
+<li>Hip abductors.</li>
+<li>Quadriceps / hamstrings if knee preserved.</li>
+<li>Intact leg, trunk and upper limbs.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q10</div>
+<h3>Two exercises for knee OA.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Quadriceps strengthening.</li>
+<li>ROM / flexibility.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q11</div>
+<h3>Four discharge-planning points after stroke.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>BP control / adherence / smoking cessation.</li>
+<li>Home modification.</li>
+<li>Safe ADL, transfers and cane use.</li>
+<li>Home exercise + rehab follow-up / caregiver education.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q12</div>
+<h3>Advice for phantom sensation.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Explain that it is common.</li>
+<li>Distinguish from phantom pain.</li>
+<li>No analgesic is required if painless.</li>
+<li>Prevent falls by reminding the patient not to load the missing limb.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q13</div>
+<h3>Cough / sneeze / strain worsens low-back pain. Flexion or extension?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Likely exam answer: extension exercise.</li>
+<li>Assume disc-related pain.</li>
+<li>In practice, use the direction that improves / centralizes symptoms.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q14</div>
+<h3>Back / leg symptoms relieved by sitting with negative SLR / Kemp. Give 2 diagnoses.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Lumbar spinal stenosis / neurogenic claudication.</li>
+<li>Vascular claudication.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> If the stem was mainly axial pain, lumbar spondylosis may have been intended.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q15</div>
+<h3>COPD airway clearance.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>ACBT.</li>
+<li>Thoracic expansion.</li>
+<li>Huff.</li>
+<li>Effective cough.</li>
+<li>Mobilization ± PEP / OPEP.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q16</div>
+<h3>~7 months after stroke, cannot walk without tripod cane and cannot lift a glass with one hand. Disability certification?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Likely appropriate for disability assessment because there are persistent walking and hand-function limitations.</li>
+<li>Certification should be based on functional impairment, not the diagnosis alone.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Treat as an exam interpretation, not a substitute for current legal criteria.</div>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q17</div>
+<h3>70-year-old woman with isolated fifth-toe amputation but can walk. Disability certification?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Likely exam-era answer: no, if function is essentially preserved.</li>
+<li>Actual certification should follow current Thai criteria and individual functional impact.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Exam interpretation only.</div>
+</div></details></article>
+</div></details>
+<details class="rotation" >
+<summary><span>Rotation 535–536</span><span class="count">2 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>Identify tripod cane and describe measurement.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Tripod cane = cane with a three-point base.</li>
+<li>Handle at wrist crease / greater trochanter level.</li>
+<li>About 20–30° elbow flexion.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q2</div>
+<h3>Football player after leg amputation cries and isolates himself. Management?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Establish rapport and acknowledge the loss.</li>
+<li>Assess mood, sleep, appetite, rehab participation and suicidal thoughts.</li>
+<li>Differentiate normal grief / adjustment from major depression.</li>
+<li>Involve rehabilitation psychology / psychiatry when indicated.</li>
+<li>Use family / peer support and realistic functional / prosthetic goals.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Exam priority: psychological assessment + support + depression / suicide screen.</div>
+</div></details></article>
+</div></details>
+<details class="rotation" >
+<summary><span>Rotation 533–534</span><span class="count">1 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>After leg amputation, patient feels shooting / electric pain “at the amputated area.” Management?</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>First determine whether pain is in the missing limb or the residual limb.</li>
+<li>Missing limb → phantom limb pain.</li>
+<li>Residual limb → inspect for wound, infection, ischemia, pressure / socket problem or neuroma.</li>
+<li>Use individualized multimodal pain management; mirror therapy can be considered for phantom pain.</li>
+</ul>
+<div class="pearl"><strong>Exam pearl:</strong> Do not automatically label every electric pain after amputation as phantom pain.</div>
+</div></details></article>
+</div></details>
+<details class="rotation" >
+<summary><span>Rotation 531–532</span><span class="count">2 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>Identify tripod cane and give one indication.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Tripod cane.</li>
+<li>Example: mild post-stroke hemiparesis needing extra balance support.</li>
+<li>Not enough for strict non-weight-bearing.</li>
+</ul>
+</div></details></article>
+<article class="qcard">
+<div class="qnum">Q2</div>
+<h3>Principles of flexibility exercise in older adults.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Warm up first.</li>
+<li>Stretch slowly to mild tension, not pain.</li>
+<li>Avoid bouncing and breath-holding.</li>
+<li>Hold static stretches about 30–60 s as tolerated.</li>
+<li>Repeat regularly, typically ≥2–3 days/week.</li>
+<li>Modify for osteoporosis, joint disease and balance risk.</li>
+</ul>
+</div></details></article>
+</div></details>
+<details class="rotation" >
+<summary><span>Rotation 527–528</span><span class="count">5 Q</span></summary>
+<div class="rotation-body">
+<article class="qcard">
+<div class="qnum">Q1</div>
+<h3>Complications and prevention in a bedridden patient.</h3>
+<details class="answerbox">
+<summary>Reveal answer</summary>
+<div class="answer-content">
+<ul class="seq-answer">
+<li>Pressure injury → repositioning, pressure redistribution, skin inspection, heel off-loading.</li>
+<li>Contracture → proper positioning + regular ROM.</li>
+<li>Muscle atrophy / deconditioning → early mobilization + progressive exercise.</li>
+<li>DVT / VTE → risk assessment, prophylaxis and mobilization.</li>
+<li>Atelectasis / secretion retention → upright positioning, mobilization, breathing / cough techniques.</li>
+<li>Constipation → fluid, fiber, mobility and bowel regimen.</li>
