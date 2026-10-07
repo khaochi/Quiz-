@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f5f6fa">
+<title>SI133 Rehabilitation Medicine — Interactive Study Bank</title>
+<style>
+:root {
+  --bg:#f5f6fa; --card:#fff; --text:#172033; --muted:#667085; --line:#e5e7ee;
+  --accent:#3157d5; --accent-soft:#eef2ff; --answer:#f6f9ff; --warn:#fff7e6;
+  --shadow:0 1px 2px rgba(16,24,40,.03);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%;overflow-wrap:anywhere}
+button,input{font:inherit}
+.wrap{max-width:780px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 12px calc(34px + env(safe-area-inset-bottom))}
+header{padding:4px 2px 8px}
+h1{font-size:24px;line-height:1.18;margin:0 0 6px;letter-spacing:-.02em}
+.subtitle{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+.stats{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}
+.pill{font-size:12px;font-weight:750;background:#fff;border:1px solid var(--line);padding:5px 8px;border-radius:999px;color:#475467}
+.sticky{position:sticky;top:0;z-index:20;background:rgba(245,246,250,.96);backdrop-filter:saturate(180%) blur(10px);-webkit-backdrop-filter:saturate(180%) blur(10px);padding:8px 0 8px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tab-input{position:absolute;opacity:0;pointer-events:none}
+.tabs label{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--text);font-weight:800;font-size:16px;padding:8px;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+#tab-mcq:checked ~ .sticky .tabs label[for="tab-mcq"],
+#tab-seq:checked ~ .sticky .tabs label[for="tab-seq"],
+#tab-high:checked ~ .sticky .tabs label[for="tab-high"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+.toolbtn{height:44px;border:1px solid var(--line);border-radius:12px;background:#fff;color:#344054;font-weight:700;padding:0 11px;touch-action:manipulation}
+.panel{display:none}
+#tab-mcq:checked ~ .panel-mcq{display:block}
+#tab-seq:checked ~ .panel-seq{display:block}
+#tab-high:checked ~ .panel-high{display:block}
+.section-note{background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px 14px;color:var(--muted);font-size:14px;line-height:1.45;margin:3px 0 10px}
+.topic-section,.hy-section{background:#fff;border:1px solid var(--line);border-radius:17px;margin:10px 0;overflow:hidden;box-shadow:var(--shadow)}
+.topic-section>summary,.hy-section>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:15px 16px;font-size:17px;font-weight:850;cursor:pointer;touch-action:manipulation}
+.topic-section>summary::-webkit-details-marker,.hy-section>summary::-webkit-details-marker{display:none}
+.topic-section>summary::after,.hy-section>summary::after{content:"+";margin-left:8px;color:var(--muted);font-size:20px}
+.topic-section[open]>summary::after,.hy-section[open]>summary::after{content:"–"}
+.count{font-size:12px;font-weight:750;color:var(--muted);background:var(--bg);border-radius:999px;padding:5px 8px;margin-left:auto}
+.topic-body{border-top:1px solid var(--line);padding:0 12px}
+.qcard{padding:16px 2px;border-bottom:1px solid var(--line)}
+.qcard:last-child{border-bottom:0}
+.qmeta{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.qnum{font-size:12px;font-weight:900;letter-spacing:.06em;color:var(--accent)}
+.flag{font-size:11px;font-weight:800;color:#8a5700;background:var(--warn);border-radius:999px;padding:4px 7px}
+.qcard h3{font-size:17px;line-height:1.43;margin:0;font-weight:780}
+.choices{margin:12px 0 0;padding-left:27px}
+.choices li{margin:7px 0;line-height:1.4}
+.answerbox{margin-top:13px}
+.answerbox>summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 15px;border-radius:13px;background:var(--accent);color:#fff;font-size:15px;font-weight:850;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.answerbox>summary::-webkit-details-marker{display:none}
+.answerbox[open]>summary{background:#e9edfb;color:#2948ae}
+.answerbox[open]>summary::after{content:"  · Hide"}
+.answer-content{margin-top:10px;background:var(--answer);border:1px solid #dbe4ff;border-radius:14px;padding:13px 14px;line-height:1.5}
+.answer-line{font-size:16px}
+.caveat{margin-top:9px;color:var(--muted);font-size:14px;line-height:1.45}
+.seq-answer{margin:0;padding-left:20px}
+.seq-answer li{margin:7px 0}
+.hy-section ul{margin:0 16px 16px;padding-left:20px}
+.hy-section li{margin:9px 0;line-height:1.45}
+.empty{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;color:var(--muted);text-align:center;margin-top:10px}
+.footer{margin-top:18px;color:var(--muted);font-size:12px;line-height:1.45;text-align:center}
+@media(max-width:520px){
+  .wrap{padding-left:10px;padding-right:10px}
+  .tools{grid-template-columns:1fr 1fr}
+  .toolbtn{width:100%}
+  .qcard h3{font-size:17px}
+  .topic-body{padding:0 10px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>SI133 Rehabilitation Medicine</h1>
+  <p class="subtitle">Deduplicated exam drill • Native iOS controls • Answers hidden by default • Offline / iPhone friendly</p>
+  <div class="stats"><span class="pill">91 MCQ cards</span><span class="pill">64 SEQ/MEQ cards</span><span class="pill">29 High-yield pearls</span></div>
+</header>
+
+<input class="tab-input" type="radio" name="tabs" id="tab-mcq" checked>
+<input class="tab-input" type="radio" name="tabs" id="tab-seq">
+<input class="tab-input" type="radio" name="tabs" id="tab-high">
+
+<div class="sticky">
+  <nav class="tabs" aria-label="Study sections">
+    <label for="tab-mcq">MCQ</label>
+    <label for="tab-seq">SEQ</label>
+    <label for="tab-high">High Yield</label>
+  </nav>
+  <div class="tools">
+    <button id="expandAll" class="toolbtn" type="button">Expand all</button>
+    <button id="collapseAll" class="toolbtn" type="button">Collapse all</button>
+  </div>
+</div>
+
+<main id="panel-mcq" class="panel panel-mcq">
+  <div class="section-note">Tap a topic, answer the question yourself, then reveal only that answer. Incomplete recalls stay explicitly marked instead of being forced into a false single answer.</div>
+  
+<details class="topic-section" open>
+  <summary><span>Principles &amp; ICF</span><span class="count">7 Q</span></summary>
+  <div class="topic-body">
+<article class="qcard" data-search="30-year-old woman; mother had breast cancer at 42 and sister had breast + ovarian cancer. best test to assess hereditary risk? brca1/2 germline testing. principles &amp; icf">
+  <div class="qmeta"><span class="qnum">M01</span></div>
+  <h3>30-year-old woman; mother had breast cancer at 42 and sister had breast + ovarian cancer. Best test to assess hereditary risk?</h3>
+  <ol class="choices" type="A"><li>BRCA testing</li><li>Breast MRI</li><li>Mammography</li><li>CT breast</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> BRCA1/2 germline testing.</div>
+    <div class="caveat">Non-rehabilitation outlier preserved because it was a substantive recalled question.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which concept best describes rehabilitation? holistic approach. principles &amp; icf">
+  <div class="qmeta"><span class="qnum">M02</span></div>
+  <h3>Which concept best describes rehabilitation?</h3>
+  <ol class="choices" type="A"><li>Holistic approach</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Holistic approach.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which is not a principle of universal design? easy to buy. principles &amp; icf">
+  <div class="qmeta"><span class="qnum">M03</span></div>
+  <h3>Which is NOT a principle of universal design?</h3>
+  <ol class="choices" type="A"><li>Easy to buy</li><li>[Recall incomplete]</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Easy to buy.</div>
+    <div class="caveat">Universal design concerns equitable/flexible/simple use, perceptible information, tolerance for error, low physical effort, and adequate size/space.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which is an impairment rather than an activity limitation? homonymous hemianopia. principles &amp; icf">
+  <div class="qmeta"><span class="qnum">M04</span></div>
+  <h3>Which is an impairment rather than an activity limitation?</h3>
+  <ol class="choices" type="A"><li>Difficulty eating</li><li>Cannot stand/walk</li><li>Homonymous hemianopia</li><li>Cannot communicate/speak</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Homonymous hemianopia.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="what best facilitates social participation of a person with disability? barrier-free environment. principles &amp; icf">
+  <div class="qmeta"><span class="qnum">M05</span></div>
+  <h3>What best facilitates social participation of a person with disability?</h3>
+  <ol class="choices" type="A"><li>Barrier-free environment</li><li>Pain</li><li>Onset/pathology</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Barrier-free environment.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="what is the physiatrist&#x27;s key role in geriatric assessment? functional assessment. principles &amp; icf">
+  <div class="qmeta"><span class="qnum">M06</span></div>
+  <h3>What is the physiatrist&#x27;s key role in geriatric assessment?</h3>
+  <ol class="choices" type="A"><li>Functional assessment</li><li>Psychiatric assessment</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Functional assessment.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which rehabilitation program is supported as a system of post-acute rehabilitation? intermediate care. principles &amp; icf">
+  <div class="qmeta"><span class="qnum">M07</span><span class="flag">Uncertain recall</span></div>
+  <h3>Which rehabilitation program is supported as a system of post-acute rehabilitation?</h3>
+  <ol class="choices" type="A"><li>Intermediate care</li><li>Community rehabilitation</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Intermediate care.</div>
+    <div class="caveat">Most likely intended Thai-system exam answer.</div>
+  </div>
+</details>
+</article></div>
+</details>
+<details class="topic-section">
+  <summary><span>Neuro Localization</span><span class="count">7 Q</span></summary>
+  <div class="topic-body">
+<article class="qcard" data-search="sensory symptoms around the middle finger with triceps/wrist involvement indicate which root? c7. neuro localization">
+  <div class="qmeta"><span class="qnum">M08</span></div>
+  <h3>Sensory symptoms around the middle finger with triceps/wrist involvement indicate which root?</h3>
+  <ol class="choices" type="A"><li>C4</li><li>C5</li><li>C6</li><li>C7</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> C7.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="weakness of great-toe dorsiflexion suggests l5 involvement. which recalled examination best supports this level? trendelenburg test. neuro localization">
+  <div class="qmeta"><span class="qnum">M09</span><span class="flag">Uncertain recall</span></div>
+  <h3>Weakness of great-toe dorsiflexion suggests L5 involvement. Which recalled examination best supports this level?</h3>
+  <ol class="choices" type="A"><li>Knee jerk</li><li>FABER</li><li>Trendelenburg</li><li>Femoral stretch test</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Trendelenburg test.</div>
+    <div class="caveat">Best match among the recalled choices.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="paresthesia over the dorsum of the foot most strongly suggests which root? l5. neuro localization">
+  <div class="qmeta"><span class="qnum">M10</span></div>
+  <h3>Paresthesia over the dorsum of the foot most strongly suggests which root?</h3>
+  <ol class="choices" type="A"><li>L3</li><li>L4</li><li>L5</li><li>S1</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> L5.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="lateral upper-arm sensory symptoms with weak shoulder abduction/elbow flexion indicate: c5 radiculopathy. neuro localization">
+  <div class="qmeta"><span class="qnum">M11</span></div>
+  <h3>Lateral upper-arm sensory symptoms with weak shoulder abduction/elbow flexion indicate:</h3>
+  <ol class="choices" type="A"><li>C4</li><li>C5</li><li>C6</li><li>C7</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> C5 radiculopathy.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which finding supports an s1 nerve-root lesion? reduced ankle jerk. neuro localization">
+  <div class="qmeta"><span class="qnum">M12</span></div>
+  <h3>Which finding supports an S1 nerve-root lesion?</h3>
+  <ol class="choices" type="A"><li>Abnormal heel walking</li><li>Reduced ankle jerk</li><li>Numbness at medial malleolus</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Reduced ankle jerk.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which provocative test is most useful for cervical radiculopathy? spurling test. neuro localization">
+  <div class="qmeta"><span class="qnum">M13</span></div>
+  <h3>Which provocative test is most useful for cervical radiculopathy?</h3>
+  <ol class="choices" type="A"><li>Neer test</li><li>Spurling test</li><li>Distraction test</li><li>Lhermitte sign</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Spurling test.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="neck pain without radiation or neurologic symptoms is what type of pain? axial pain. neuro localization">
+  <div class="qmeta"><span class="qnum">M14</span></div>
+  <h3>Neck pain without radiation or neurologic symptoms is what type of pain?</h3>
+  <ol class="choices" type="A"><li>Axial pain</li><li>Bizarre pain</li><li>Referred pain</li><li>Radicular pain</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Axial pain.</div>
+    
+  </div>
+</details>
+</article></div>
+</details>
+<details class="topic-section">
+  <summary><span>Stroke &amp; Swallowing</span><span class="count">14 Q</span></summary>
+  <div class="topic-body">
+<article class="qcard" data-search="best prerequisite before oral-swallow assessment? can sit upright and is alert / follows commands. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M15</span></div>
+  <h3>Best prerequisite before oral-swallow assessment?</h3>
+  <ol class="choices" type="A"><li>Can sit upright and is alert / follows commands</li><li>Sharp cough on command</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Can sit upright and is alert / follows commands.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="best prerequisite before starting basic-adl rehabilitation after acute stroke? good sitting balance. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M16</span></div>
+  <h3>Best prerequisite before starting basic-ADL rehabilitation after acute stroke?</h3>
+  <ol class="choices" type="A"><li>Can talk</li><li>Good sitting balance</li><li>Good standing balance</li><li>Good fine motor function</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Good sitting balance.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which patient is the best candidate for oral feeding from the recalled choices? hemiparesis with absent gag reflex. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M17</span><span class="flag">Uncertain recall</span></div>
+  <h3>Which patient is the best candidate for oral feeding from the recalled choices?</h3>
+  <ol class="choices" type="A"><li>Hemiplegia with drowsiness</li><li>Hemiparesis with absent gag reflex</li><li>Hemiplegia with severe orthostatic hypotension</li><li>Hypersecretion with moderate dyspnea</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Hemiparesis with absent gag reflex.</div>
+    <div class="caveat">Absent gag reflex alone does not prove unsafe swallowing; actual swallow safety still requires assessment.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="day-3 stroke patient chokes after water swallowing test. proper management? npo with enteral feeding via ng tube while swallowing safety is reassessed. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M18</span></div>
+  <h3>Day-3 stroke patient chokes after water swallowing test. Proper management?</h3>
+  <ol class="choices" type="A"><li>NPO with IV fluid only</li><li>Retain NG tube</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> NPO with enteral feeding via NG tube while swallowing safety is reassessed.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="two-week stroke patient needs moderate assistance in adls. best rehabilitation setting if medically stable and able to participate? inpatient intensive rehabilitation. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M19</span></div>
+  <h3>Two-week stroke patient needs moderate assistance in ADLs. Best rehabilitation setting if medically stable and able to participate?</h3>
+  <ol class="choices" type="A"><li>Home program + OPD</li><li>Inpatient intensive rehabilitation</li><li>[Recall incomplete]</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Inpatient intensive rehabilitation.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="primary goal of acute-phase stroke rehabilitation? prevent immobilization syndrome / secondary complications. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M20</span></div>
+  <h3>Primary goal of acute-phase stroke rehabilitation?</h3>
+  <ol class="choices" type="A"><li>Prevent immobilization syndrome / secondary complications</li><li>Regain full function</li><li>Return to normal life</li><li>Independent basic ADL</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Prevent immobilization syndrome / secondary complications.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which finding is least incompatible with continuing acute stroke rehabilitation? spo₂ 92% is the least unstable of the recalled choices. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M21</span><span class="flag">Uncertain recall</span></div>
+  <h3>Which finding is least incompatible with continuing acute stroke rehabilitation?</h3>
+  <ol class="choices" type="A"><li>SpO₂ 92%</li><li>Heart rate 110/min</li><li>Fever 39°C</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> SpO₂ 92% is the least unstable of the recalled choices.</div>
+    <div class="caveat">High fever and significant tachycardia argue against intensive rehabilitation.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="day-3 lacunar stroke: motor grade iv, minimal assistance for badl, already walking with tripod cane. best next rehabilitation focus among the recalled choices? home program for ambulation and hand function. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M22</span></div>
+  <h3>Day-3 lacunar stroke: motor grade IV, minimal assistance for BADL, already walking with tripod cane. Best next rehabilitation focus among the recalled choices?</h3>
+  <ol class="choices" type="A"><li>Electrical stimulation</li><li>Shoulder care to prevent subluxation</li><li>Home program for ambulation and hand function</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Home program for ambulation and hand function.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="post-stroke hand edema: most appropriate simple management among the recalled choices? elevation of the hand. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M23</span></div>
+  <h3>Post-stroke hand edema: most appropriate simple management among the recalled choices?</h3>
+  <ol class="choices" type="A"><li>Resting splint</li><li>Elevate hand above elbow/heart level while sitting</li><li>Elastic bandage from fingers to elbow</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Elevation of the hand.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="most important intervention to prevent post-stroke joint contracture? stretching / regular range-of-motion exercise. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M24</span></div>
+  <h3>Most important intervention to prevent post-stroke joint contracture?</h3>
+  <ol class="choices" type="A"><li>3–5 repetitions × 2/day</li><li>10 repetitions × 1/day</li><li>Strengthening</li><li>Stretching / regular ROM</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Stretching / regular range-of-motion exercise.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="left motor grade 3, right 5; can stand only by locking the knee. best walking goal for this admission? household ambulation with a wide-base cane. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M25</span></div>
+  <h3>Left motor grade 3, right 5; can stand only by locking the knee. Best walking goal for this admission?</h3>
+  <ol class="choices" type="A"><li>Good standing balance only</li><li>Household ambulation with wide-base cane</li><li>Household ambulation without gait aid</li><li>Exercise ambulation with gait aid only</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Household ambulation with a wide-base cane.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="typical gait pattern after hemiplegic stroke? circumduction gait. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M26</span></div>
+  <h3>Typical gait pattern after hemiplegic stroke?</h3>
+  <ol class="choices" type="A"><li>Circumduction gait</li><li>Antalgic gait</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Circumduction gait.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="what is the evidence-based conclusion about very-early high-dose mobilization (&lt;24 h) after acute stroke? no demonstrated functional benefit. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M27</span></div>
+  <h3>What is the evidence-based conclusion about very-early high-dose mobilization (&lt;24 h) after acute stroke?</h3>
+  <ol class="choices" type="A"><li>Always improves outcome</li><li>No demonstrated functional benefit</li><li>Reduces all complications</li><li>Eliminates complications</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> No demonstrated functional benefit.</div>
+    <div class="caveat">High-dose very-early mobilization may be harmful; mobilize when medically appropriate rather than aggressively within the first 24 hours.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="right mca stroke classically produces neglect of which side? left hemispatial neglect. stroke &amp; swallowing">
+  <div class="qmeta"><span class="qnum">M28</span></div>
+  <h3>Right MCA stroke classically produces neglect of which side?</h3>
+  <ol class="choices" type="A"><li>Left side</li><li>Right side</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Left hemispatial neglect.</div>
+    
+  </div>
+</details>
+</article></div>
+</details>
+<details class="topic-section">
+  <summary><span>Gait Aids &amp; Falls</span><span class="count">11 Q</span></summary>
+  <div class="topic-body">
+<article class="qcard" data-search="young coordinated patient must remain non-weight-bearing on one leg. best aid among the recalled choices? lofstrand (forearm) crutches. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M29</span></div>
+  <h3>Young coordinated patient must remain non-weight-bearing on one leg. Best aid among the recalled choices?</h3>
+  <ol class="choices" type="A"><li>Lofstrand crutches</li><li>Platform walker</li><li>Tripod cane</li><li>Walker</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Lofstrand (forearm) crutches.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="cerebellar ataxia, just beginning gait training. most stable aid? walker. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M30</span></div>
+  <h3>Cerebellar ataxia, just beginning gait training. Most stable aid?</h3>
+  <ol class="choices" type="A"><li>Walker</li><li>Axillary crutches</li><li>Lofstrand crutches</li><li>Cane</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Walker.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="typical gait aid for mild hemiparesis requiring unilateral support? tripod cane. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M31</span></div>
+  <h3>Typical gait aid for mild hemiparesis requiring unilateral support?</h3>
+  <ol class="choices" type="A"><li>Axillary crutches</li><li>Standard walker</li><li>Lofstrand crutches</li><li>Tripod cane</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Tripod cane.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="60-year-old woman with mild bilateral knee oa, left leg pain, community ambulation. best aid? single cane. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M32</span></div>
+  <h3>60-year-old woman with mild bilateral knee OA, left leg pain, community ambulation. Best aid?</h3>
+  <ol class="choices" type="A"><li>Single cane</li><li>Tripod cane</li><li>Lofstrand crutches</li><li>Walker</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Single cane.</div>
+    <div class="caveat">Usually held contralateral to the more painful limb.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="above-knee amputee before prosthetic ambulation: which gait pattern is typically used with two crutches? three-point gait. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M33</span></div>
+  <h3>Above-knee amputee before prosthetic ambulation: which gait pattern is typically used with two crutches?</h3>
+  <ol class="choices" type="A"><li>Four-point gait</li><li>Two-point gait</li><li>Three-point gait</li><li>Drag gait</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Three-point gait.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="foot drop after prolonged hospitalization: appropriate orthosis? plastic ankle-foot orthosis (afo). gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M34</span></div>
+  <h3>Foot drop after prolonged hospitalization: appropriate orthosis?</h3>
+  <ol class="choices" type="A"><li>Knee brace</li><li>Plastic ankle-foot orthosis (AFO)</li><li>KAFO</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Plastic ankle-foot orthosis (AFO).</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="best single historical predictor of future falls among the recalled choices? previous fall history. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M35</span></div>
+  <h3>Best single historical predictor of future falls among the recalled choices?</h3>
+  <ol class="choices" type="A"><li>Home condition</li><li>Previous fall history</li><li>Medication</li><li>Balance test</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Previous fall history.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which is not primarily a balance test? sit and reach. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M36</span></div>
+  <h3>Which is NOT primarily a balance test?</h3>
+  <ol class="choices" type="A"><li>Timed Up and Go</li><li>Chair stand</li><li>Tandem walk</li><li>Sit and reach</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Sit and reach.</div>
+    <div class="caveat">It primarily assesses flexibility.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which one is not a consequence of falling in an older adult? recall incomplete — all four can occur after falls. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M37</span><span class="flag">Uncertain recall</span></div>
+  <h3>Which one is NOT a consequence of falling in an older adult?</h3>
+  <ol class="choices" type="A"><li>Anxiety</li><li>Caregiver burden</li><li>Poor quality of life</li><li>Limited activity</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Recall incomplete — all four can occur after falls.</div>
+    <div class="caveat">Do not memorize a fake single answer from this recalled stem.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which item is not part of comprehensive fall-risk assessment? recall incomplete — all can be clinically relevant. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M38</span><span class="flag">Uncertain recall</span></div>
+  <h3>Which item is NOT part of comprehensive fall-risk assessment?</h3>
+  <ol class="choices" type="A"><li>Polypharmacy</li><li>Urinary ability</li><li>Environment</li><li>Foot/footwear</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Recall incomplete — all can be clinically relevant.</div>
+    <div class="caveat">Medication review, environment and feet/footwear are standard; urinary urgency/incontinence can also raise fall risk.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which gait change is compatible with normal aging? shorter step length and reduced arm swing are classic age-related changes. gait aids &amp; falls">
+  <div class="qmeta"><span class="qnum">M39</span><span class="flag">Uncertain recall</span></div>
+  <h3>Which gait change is compatible with normal aging?</h3>
+  <ol class="choices" type="A"><li>Shorter step length</li><li>Less arm swing</li><li>Loss of lordosis</li><li>Stooped posture</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Shorter step length and reduced arm swing are classic age-related changes.</div>
+    <div class="caveat">The recalled question appears to allow more than one plausible choice.</div>
+  </div>
+</details>
+</article></div>
+</details>
+<details class="topic-section">
+  <summary><span>Foot &amp; Plantar Heel Pain</span><span class="count">5 Q</span></summary>
+  <div class="topic-body">
+<article class="qcard" data-search="severe plantar-fasciitis pain: best acute symptomatic option among recalled choices? oral nsaid. foot &amp; plantar heel pain">
+  <div class="qmeta"><span class="qnum">M40</span><span class="flag">Uncertain recall</span></div>
+  <h3>Severe plantar-fasciitis pain: best acute symptomatic option among recalled choices?</h3>
+  <ol class="choices" type="A"><li>Oral NSAID</li><li>Cold immersion</li><li>Intra-articular steroid</li><li>Arch support</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Oral NSAID.</div>
+    <div class="caveat">Longer-term treatment should emphasize load modification and stretching.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="why obtain heel radiography in suspected plantar fasciopathy? exclude an alternative bony lesion such as calcaneal stress injury. foot &amp; plantar heel pain">
+  <div class="qmeta"><span class="qnum">M41</span></div>
+  <h3>Why obtain heel radiography in suspected plantar fasciopathy?</h3>
+  <ol class="choices" type="A"><li>Identify bone morphology</li><li>Exclude bone stress injury</li><li>Exclude spondyloarthropathy</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Exclude an alternative bony lesion such as calcaneal stress injury.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="common risk factor for plantar fasciitis? reduced ankle dorsiflexion. foot &amp; plantar heel pain">
+  <div class="qmeta"><span class="qnum">M42</span></div>
+  <h3>Common risk factor for plantar fasciitis?</h3>
+  <ol class="choices" type="A"><li>Diabetes</li><li>Reduced ankle dorsiflexion</li><li>Sedentary lifestyle</li><li>Weak gastrocnemius-soleus</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Reduced ankle dorsiflexion.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="runner with chronic heel pain and pes cavus: most appropriate modality among recalled choices? cushioned insole / foot orthosis. foot &amp; plantar heel pain">
+  <div class="qmeta"><span class="qnum">M43</span><span class="flag">Uncertain recall</span></div>
+  <h3>Runner with chronic heel pain and pes cavus: most appropriate modality among recalled choices?</h3>
+  <ol class="choices" type="A"><li>Medial arch support</li><li>Insole</li><li>Custom shoe</li><li>Taping</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Cushioned insole / foot orthosis.</div>
+    <div class="caveat">The exact orthotic prescription should match mechanics; a medial arch support is not automatically correct for every cavus foot.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="young runner with plantar heel pain: preferred exercise among recalled choices? calf stretching. foot &amp; plantar heel pain">
+  <div class="qmeta"><span class="qnum">M44</span></div>
+  <h3>Young runner with plantar heel pain: preferred exercise among recalled choices?</h3>
+  <ol class="choices" type="A"><li>Gentle massage at plantar fascia</li><li>Calf stretch</li><li>[Recall incomplete]</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Calf stretching.</div>
+    <div class="caveat">Plantar-fascia-specific stretching is also useful.</div>
+  </div>
+</details>
+</article></div>
+</details>
+<details class="topic-section">
+  <summary><span>Hand, Wrist &amp; Elbow</span><span class="count">14 Q</span></summary>
+  <div class="topic-body">
+<article class="qcard" data-search="pain at the radial styloid: most likely diagnosis? de quervain tenosynovitis. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M45</span></div>
+  <h3>Pain at the radial styloid: most likely diagnosis?</h3>
+  <ol class="choices" type="A"><li>De Quervain tenosynovitis</li><li>Flexor tendon tenosynovitis</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> De Quervain tenosynovitis.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="appropriate orthosis for de quervain tenosynovitis? thumb-spica splint. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M46</span></div>
+  <h3>Appropriate orthosis for De Quervain tenosynovitis?</h3>
+  <ol class="choices" type="A"><li>Resting wrist splint</li><li>Thumb-spica splint</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Thumb-spica splint.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="new mother carrying baby develops radial-thumb pain. best orthosis? thumb-spica splint. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M47</span></div>
+  <h3>New mother carrying baby develops radial-thumb pain. Best orthosis?</h3>
+  <ol class="choices" type="A"><li>Thumb-spica splint</li><li>Naproxen</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Thumb-spica splint.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="thumb tucked into palm followed by ulnar deviation provokes radial-wrist pain. this is: finkelstein/eichhoff-type maneuver for de quervain tenosynovitis. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M48</span></div>
+  <h3>Thumb tucked into palm followed by ulnar deviation provokes radial-wrist pain. This is:</h3>
+  <ol class="choices" type="A"><li>Finkelstein/Eichhoff-type maneuver</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Finkelstein/Eichhoff-type maneuver for De Quervain tenosynovitis.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="night hand numbness relieved by shaking the hand: most likely diagnosis? carpal tunnel syndrome. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M49</span><span class="flag">Uncertain recall</span></div>
+  <h3>Night hand numbness relieved by shaking the hand: most likely diagnosis?</h3>
+  <ol class="choices" type="A"><li>Scaphoid necrosis</li><li>Carpal arthritis</li><li>De Quervain syndrome</li><li>Cervical spondylosis / radiculopathy</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Carpal tunnel syndrome.</div>
+    <div class="caveat">The correct diagnosis was not actually present among some recalled choice sets; the stem is classic for CTS.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="in carpal tunnel syndrome, which muscle should not atrophy? first dorsal interosseous. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M50</span></div>
+  <h3>In carpal tunnel syndrome, which muscle should NOT atrophy?</h3>
+  <ol class="choices" type="A"><li>Flexor pollicis brevis</li><li>Opponens pollicis</li><li>First lumbrical</li><li>First dorsal interosseous</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> First dorsal interosseous.</div>
+    <div class="caveat">It is innervated by the ulnar nerve.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which pair represents typical thenar muscles affected in carpal tunnel syndrome? apb + opponens pollicis. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M51</span></div>
+  <h3>Which pair represents typical thenar muscles affected in carpal tunnel syndrome?</h3>
+  <ol class="choices" type="A"><li>APB + EPB</li><li>EPL + APL</li><li>APB + opponens pollicis</li><li>EPL + finger flexor</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> APB + opponens pollicis.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="best diagnostic investigation for suspected carpal tunnel syndrome among the recalled choices? nerve-conduction study. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M52</span></div>
+  <h3>Best diagnostic investigation for suspected carpal tunnel syndrome among the recalled choices?</h3>
+  <ol class="choices" type="A"><li>MRI</li><li>Nerve-conduction study</li><li>Plain film</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Nerve-conduction study.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="wrist-flexion provocative test for carpal tunnel syndrome? phalen test. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M53</span></div>
+  <h3>Wrist-flexion provocative test for carpal tunnel syndrome?</h3>
+  <ol class="choices" type="A"><li>Phalen test</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Phalen test.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which action most typically provokes tennis elbow? resisted / forceful wrist extension. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M54</span></div>
+  <h3>Which action most typically provokes tennis elbow?</h3>
+  <ol class="choices" type="A"><li>Forceful wrist flexion</li><li>Forceful wrist extension</li><li>Forceful elbow extension</li><li>Forceful finger extension</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Resisted / forceful wrist extension.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="appropriate orthosis/support for tennis elbow among recalled choices? wrist-support orthosis. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M55</span></div>
+  <h3>Appropriate orthosis/support for tennis elbow among recalled choices?</h3>
+  <ol class="choices" type="A"><li>Thumb spica</li><li>Finger orthosis</li><li>Resting wrist support</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Wrist-support orthosis.</div>
+    <div class="caveat">A counterforce elbow strap is another common option.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="chef with tennis elbow, no rest pain, pain only during heavy work. best rehabilitation management? progressive wrist-extensor strengthening. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M56</span></div>
+  <h3>Chef with tennis elbow, no rest pain, pain only during heavy work. Best rehabilitation management?</h3>
+  <ol class="choices" type="A"><li>Oral NSAID</li><li>Wrist-flexor stretching</li><li>Wrist-extensor strengthening</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Progressive wrist-extensor strengthening.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="acute overuse pain while opening a bottle: best medication among recalled choices? oral nsaid. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M57</span></div>
+  <h3>Acute overuse pain while opening a bottle: best medication among recalled choices?</h3>
+  <ol class="choices" type="A"><li>Oral NSAID</li><li>Fluoxetine</li><li>Pregabalin</li><li>Sertraline</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Oral NSAID.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="trigger finger in an acute painful phase with a1 pulley tenderness: best recalled initial treatment? oral nsaid with activity modification initially. hand, wrist &amp; elbow">
+  <div class="qmeta"><span class="qnum">M58</span></div>
+  <h3>Trigger finger in an acute painful phase with A1 pulley tenderness: best recalled initial treatment?</h3>
+  <ol class="choices" type="A"><li>Oral NSAID</li><li>Warm bath</li><li>Thai traditional massage</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Oral NSAID with activity modification initially.</div>
+    <div class="caveat">Persistent symptomatic trigger finger often responds to corticosteroid injection, which was not among the recalled choices.</div>
+  </div>
+</details>
+</article></div>
+</details>
+<details class="topic-section">
+  <summary><span>Shoulder</span><span class="count">5 Q</span></summary>
+  <div class="topic-body">
+<article class="qcard" data-search="which activity commonly provokes rotator-cuff/subacromial pain? overhead activity. shoulder">
+  <div class="qmeta"><span class="qnum">M59</span></div>
+  <h3>Which activity commonly provokes rotator-cuff/subacromial pain?</h3>
+  <ol class="choices" type="A"><li>Forceful grip</li><li>Overhead activity</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Overhead activity.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="overhead pain; arm elevated in scapular plane, thumb down; pain with downward resistance. diagnosis / test? supraspinatus tendinopathy / positive empty-can (jobe) test. shoulder">
+  <div class="qmeta"><span class="qnum">M60</span></div>
+  <h3>Overhead pain; arm elevated in scapular plane, thumb down; pain with downward resistance. Diagnosis / test?</h3>
+  <ol class="choices" type="A"><li>Supraspinatus tendinopathy</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Supraspinatus tendinopathy / positive empty-can (Jobe) test.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="pain with shoulder elevation and internal rotation at about 90° abduction most likely indicates: supraspinatus/subacromial impingement is the likely intended answer. shoulder">
+  <div class="qmeta"><span class="qnum">M61</span><span class="flag">Uncertain recall</span></div>
+  <h3>Pain with shoulder elevation and internal rotation at about 90° abduction most likely indicates:</h3>
+  <ol class="choices" type="A"><li>Supraspinatus tendinitis</li><li>Infraspinatus pathology</li><li>[Recall incomplete]</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Supraspinatus/subacromial impingement is the likely intended answer.</div>
+    <div class="caveat">The remembered maneuver is not specific enough for a completely certain single-tendon diagnosis.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="frozen shoulder for ~2 months with global rom limitation. best recalled management? gentle pain-limited rom / stretching. shoulder">
+  <div class="qmeta"><span class="qnum">M62</span><span class="flag">Uncertain recall</span></div>
+  <h3>Frozen shoulder for ~2 months with global ROM limitation. Best recalled management?</h3>
+  <ol class="choices" type="A"><li>Cold + stretching</li><li>Ultrasound + ROM</li><li>Warm + strengthening</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Gentle pain-limited ROM / stretching.</div>
+    <div class="caveat">If forced to select the recalled option, &#x27;Ultrasound + ROM&#x27; is closest because ROM is appropriate; ultrasound itself is not the key treatment.</div>
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="severe frozen shoulder (pain 8/10), active and passive rom limited in all directions. best exercise among recalled choices? recall incomplete — none is ideal in a very painful freezing phase. shoulder">
+  <div class="qmeta"><span class="qnum">M63</span><span class="flag">Uncertain recall</span></div>
+  <h3>Severe frozen shoulder (pain 8/10), active and passive ROM limited in all directions. Best exercise among recalled choices?</h3>
+  <ol class="choices" type="A"><li>Wall push-up</li><li>Pulley exercise</li><li>Isometric exercise</li><li>Wall climbing</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Recall incomplete — none is ideal in a very painful freezing phase.</div>
+    <div class="caveat">Use gentle pain-limited ROM/pendulum; avoid aggressive stretching or strengthening.</div>
+  </div>
+</details>
+</article></div>
+</details>
+<details class="topic-section">
+  <summary><span>Knee OA</span><span class="count">7 Q</span></summary>
+  <div class="topic-body">
+<article class="qcard" data-search="60-year-old with bilateral bow legs, no rest pain but function-limiting knee pain. best management? quadriceps strengthening. knee oa">
+  <div class="qmeta"><span class="qnum">M64</span></div>
+  <h3>60-year-old with bilateral bow legs, no rest pain but function-limiting knee pain. Best management?</h3>
+  <ol class="choices" type="A"><li>Isotonic quadriceps exercise</li><li>Knee support</li><li>Oral NSAID</li><li>[Recall incomplete]</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Quadriceps strengthening.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="typical clinical finding of knee osteoarthritis? bony enlargement. knee oa">
+  <div class="qmeta"><span class="qnum">M65</span></div>
+  <h3>Typical clinical finding of knee osteoarthritis?</h3>
+  <ol class="choices" type="A"><li>Genu recurvatum</li><li>Bony enlargement</li><li>Mediolateral ligament impairment</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Bony enlargement.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="typical deformity in severe knee oa? genu varum with flexion contracture. knee oa">
+  <div class="qmeta"><span class="qnum">M66</span></div>
+  <h3>Typical deformity in severe knee OA?</h3>
+  <ol class="choices" type="A"><li>Genu valgum</li><li>Genu varum</li><li>Genu valgum + flexion</li><li>Genu varum + flexion</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Genu varum with flexion contracture.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="knee oa flare after prolonged walking, no redness/warmth/swelling. best exercise type? isometric exercise. knee oa">
+  <div class="qmeta"><span class="qnum">M67</span></div>
+  <h3>Knee OA flare after prolonged walking, no redness/warmth/swelling. Best exercise type?</h3>
+  <ol class="choices" type="A"><li>Isometric</li><li>Isotonic</li><li>Isokinetic</li><li>Plyometric</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Isometric exercise.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="major disadvantage of prolonged knee-brace use? quadriceps atrophy. knee oa">
+  <div class="qmeta"><span class="qnum">M68</span></div>
+  <h3>Major disadvantage of prolonged knee-brace use?</h3>
+  <ol class="choices" type="A"><li>Joint stiffness</li><li>Quadriceps atrophy</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Quadriceps atrophy.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="basic strengthening exercise for knee oa? quadriceps setting. knee oa">
+  <div class="qmeta"><span class="qnum">M69</span></div>
+  <h3>Basic strengthening exercise for knee OA?</h3>
+  <ol class="choices" type="A"><li>Knee curl</li><li>Quadriceps stretching</li><li>Quadriceps setting</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Quadriceps setting.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which radiographic finding is characteristic of knee oa? subchondral sclerosis. knee oa">
+  <div class="qmeta"><span class="qnum">M70</span></div>
+  <h3>Which radiographic finding is characteristic of knee OA?</h3>
+  <ol class="choices" type="A"><li>Synovial hypertrophy</li><li>Subchondral sclerosis</li><li>Periarticular osteopenia</li><li>Punched-out lesion</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Subchondral sclerosis.</div>
+    
+  </div>
+</details>
+</article></div>
+</details>
+<details class="topic-section">
+  <summary><span>Amputation</span><span class="count">10 Q</span></summary>
+  <div class="topic-body">
+<article class="qcard" data-search="best method to prevent residual-limb edema after amputation? compression bandaging / shrinker. amputation">
+  <div class="qmeta"><span class="qnum">M71</span></div>
+  <h3>Best method to prevent residual-limb edema after amputation?</h3>
+  <ol class="choices" type="A"><li>Massage and stretching</li><li>Compression bandage</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Compression bandaging / shrinker.</div>
+    
+  </div>
+</details>
+</article>
+<article class="qcard" data-search="which residual-limb positioning practice should be avoided? placing a pillow under the knee. amputation">
+  <div class="qmeta"><span class="qnum">M72</span></div>
+  <h3>Which residual-limb positioning practice should be avoided?</h3>
+  <ol class="choices" type="A"><li>Place a pillow under the knee to elevate the stump</li><li>Prone lying</li><li>Wheelchair with appropriate stump support</li></ol>
+  <details class="answerbox">
+  <summary>Reveal answer</summary>
+  <div class="answer-content">
+    <div class="answer-line"><strong>Best answer:</strong> Placing a pillow under the knee.</div>
+    <div class="caveat">It promotes knee-flexion contracture.</div>
